@@ -74,16 +74,16 @@ class EventList(generic.ListView):  # display a list of objects
 
 
 class TaskList(generic.ListView):  # display a list of objects
-    template_name = 'kathina_app/events.html'
+    template_name = 'kathina_app/tasks.html'
     context_object_name = 'task_list'
 
     def get_queryset(self):
-
-        task = Task()
-        task.name = 'something'
-        task.duration_minutes = 10
-        task.save()
-        return Event.objects.order_by('start_time')
+        #
+        # task = Task()
+        # task.name = 'something'
+        # task.duration_minutes = 10
+        # task.save()
+        return Task.objects.order_by('duration_minutes')
 
 
 def smart_scheduler():
@@ -116,7 +116,7 @@ def smart_scheduler():
     return smartList
 
 class DayView(generic.ListView):
-    template_name = 'kathina_app/events.html'
+    template_name = 'kathina_app/day.html'
     context_object_name = 'day_list'
 
     def get_queryset(self):

@@ -3,13 +3,13 @@
 <link rel="stylesheet" type="text/css" href="{% static 'kathina_app/style.css' %}" />
 
 
-<h1>Tasks you have today</h1>
-{% if task_list %}
+<h1>Everything you have today</h1>
+{% if day_list %}
     <ul>
-    {% for task in task_list %}
-        <li><a>{{ task.name }} for {{ task.duration_minutes }}</a></li>
+    {% for event in day_list %}
+        <li><a>{{ event.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>Nothing to do!!</p>
+    <p>A free free day.</p>
 {% endif %}
