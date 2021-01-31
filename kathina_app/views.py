@@ -5,7 +5,7 @@ from .models import Event, Task
 import datetime
 import pickle
 import os.path
-from datetime import timedelta
+from datetime import date
 
 import pytz
 from googleapiclient.discovery import build
@@ -77,8 +77,8 @@ def smart_scheduler():
     eventList = Event.objects.all()
     smartList = eventList
 
-    pref_start_time = datetime.Today.AddHours(9)
-    pref_end_time = datetime.Today.AddHours(23)
+    pref_start_time = datetime.datetime.now().replace(hour=9)
+    pref_end_time = datetime.datetime.now().replace(hour=23)
 
     #TODO: Need to code for overflowing end times (by going into the next day)
 
