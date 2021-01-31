@@ -13,35 +13,21 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 scope = ["https://www.googleapis.com/auth/calendar"]
-flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes=scopes)
+flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes=scope)
 credentials = flow.run_console()
 
 pickle.dump(credentials, open("token.pkl", "wb"))
 credentials = pickle.load(open("token.pkl", "rb"))
 
-def build_service():
-    service = build("calendar", "v3", credentials=credentials)
-    return service
+service = build("calendar", "v3", credentials=credentials)
+calendarId = 'primary'
 
+#Define the current day with minimum and maximum limits for event extraction
+day_now = datetime.datetime.now().date()
+dateMax = str(day_now)+'T23:59:59'
+dateMin = str(day_now)+'T00:00:00'
 
-def create_event():
-    service = build_service()
-    start_datetime = datetime.datetime.now(tz=pytz.utc)
-    event = (
-        service.events()
-        .insert(
-            calendarId="primary",
-            body={
-                "summary": "This is an event yay!",
-                "description": "It worked!",
-                "start": {"dateTime": start_datetime.isoformat()},
-                "end": {
-                    "dateTime": (start_datetime + timedelta(minutes=15)).isoformat()
-                },
-            },
-        )
-        .execute()
-    )
+result = service.event().list(calendarId=calendarId, dateMax=dateMax, dateMin=dateMin).execute()
 
 
 class EventList(generic.ListView):  # display a list of objects
