@@ -7,8 +7,8 @@ h1 {
 }
 
 body {
-	background: white url('images/background.gif') top; 
-	/* if you add no-repeat it will just shoe the image once instead of tiling it*/
+	background: url("images/kathina.png") no-repeat; 
+	/* if you add no-repeat it will just show the image once instead of tiling it*/
 	/* also you can say anything for location, top left etc, it will put/start the image there */
 }
 
