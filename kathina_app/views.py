@@ -3,18 +3,21 @@ from django.views import generic
 
 from .models import Event, Task
 import datetime
+import pickle
+import os.path
 from datetime import timedelta
 
 import pytz
 from googleapiclient.discovery import build
-from oauth2client.service_account import ServiceAccountCredentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
-service_account_email = "INSERT_HERE"
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    filename="FILENAME.json", scopes=SCOPES
-)
+scope = ["https://www.googleapis.com/auth/calendar"]
+flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes=scopes)
+credentials = flow.run_console()
 
+pickle.dump(credentials, open("token.pkl", "wb"))
+credentials = pickle.load(open("token.pkl", "rb"))
 
 def build_service():
     service = build("calendar", "v3", credentials=credentials)
@@ -23,15 +26,14 @@ def build_service():
 
 def create_event():
     service = build_service()
-
     start_datetime = datetime.datetime.now(tz=pytz.utc)
     event = (
         service.events()
         .insert(
-            calendarId="CALENDARID@group.calendar.google.com",
+            calendarId="primary",
             body={
-                "summary": "Foo",
-                "description": "Bar",
+                "summary": "This is an event yay!",
+                "description": "It worked!",
                 "start": {"dateTime": start_datetime.isoformat()},
                 "end": {
                     "dateTime": (start_datetime + timedelta(minutes=15)).isoformat()
