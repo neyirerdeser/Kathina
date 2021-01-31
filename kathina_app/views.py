@@ -26,14 +26,26 @@ credentials = pickle.load(open("token.pkl", "rb"))
 
 
 service = build("calendar", "v3", credentials=credentials)
-calendarId = 'primary'
+
+'''
+now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+print('Getting the upcoming 10 events')
+events_result = service.events().list(calendarId='primary', timeMin=now,
+                                    maxResults=10, singleEvents=True,
+                                    orderBy='startTime').execute()
+events = events_result.get('items', [])
+'''
+
 
 #Define the current day with minimum and maximum limits for event extraction
 day_now = datetime.datetime.now().date()
-dateMax = str(day_now)+'T23:59:59'
-dateMin = str(day_now)+'T00:00:00'
+dateMax = str(day_now)+'T23:59:59.000Z'
+dateMin = str(day_now)+'T00:00:00.000Z'
 
-result = service.event().list(calendarId=calendarId, dateMax=dateMax, dateMin=dateMin).execute()
+dateMax_obj = datetime.datetime.strptime(dateMax, '%Y-%m-%dT%H:%M:%S.%fZ')
+dateMin_obj = datetime.datetime.strptime(dateMin, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+result = service.events().list(calendarId='primary', timeMax = dateMax_obj, timeMin = dateMin_obj, singleEvents = True).execute()
 
 
 
