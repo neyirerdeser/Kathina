@@ -1,0 +1,15 @@
+<!-- taking in the style.css file -->
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'kathina_app/style.css' %}" />
+
+
+<h1>Events you have today</h1>
+{% if event_list %}
+    <ul>
+    {% for event in event_list %}
+        <li><a>{{ event.name }} at {{ event.start_time }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>A free free day.</p>
+{% endif %}
