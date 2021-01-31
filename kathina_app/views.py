@@ -12,8 +12,9 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 scope = ["https://www.googleapis.com/auth/calendar"]
-flow = InstalledAppFlow.from_client_secrets_file("credentials.json", scopes=scope)
+flow = InstalledAppFlow.from_client_secrets_file(os.path.join(BASE_DIR,"kathina_app/credentials.json"), scopes=scope)
 credentials = flow.run_console()
 
 pickle.dump(credentials, open("token.pkl", "wb"))
@@ -28,26 +29,7 @@ dateMax = str(day_now)+'T23:59:59'
 dateMin = str(day_now)+'T00:00:00'
 
 result = service.event().list(calendarId=calendarId, dateMax=dateMax, dateMin=dateMin).execute()
-=======
 
-# def create_event():
-#     service = build_service()
-#     start_datetime = datetime.datetime.now(tz=pytz.utc)
-#     event = (
-#         service.events()
-#         .insert(
-#             calendarId="primary",
-#             body={
-#                 "summary": "This is an event yay!",
-#                 "description": "It worked!",
-#                 "start": {"dateTime": start_datetime.isoformat()},
-#                 "end": {
-#                     "dateTime": (start_datetime + timedelta(minutes=15)).isoformat()
-#                 },
-#             },
-#         )
-#         .execute()
-#     )
 
 
 class EventList(generic.ListView):  # display a list of objects
@@ -55,6 +37,17 @@ class EventList(generic.ListView):  # display a list of objects
     context_object_name = 'event_list'
 
     def get_queryset(self):
+        Event.objects.all().delete()
+        # create new event objects from result
+        items = result['items']
+        for item in items:
+            event = Event()
+            event.name = item['summary']
+            event.start_time = item['start']['dateTime'][11:]
+            event.end_time = item['end']['dateTime'][11:]
+            event.save()
+
+
         return Event.objects.order_by('start_time')
 
 
