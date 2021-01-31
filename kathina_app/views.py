@@ -55,13 +55,13 @@ class EventList(generic.ListView):  # display a list of objects
             hstd = int(start_time[9:11])
             mst = int(start_time[3:5])
             mstd = int(start_time[12:14])
-            start = datetime.datetime.now().replace(hour = hst + hstd, minute = mst + mstd).time()
+            start = datetime.datetime.now().replace(hour = hst + hstd, minute = mst + mstd, second = 0).time()
             end_time = item['end']['dateTime'][11:]
             het = int(end_time[:2])
             met = int(start_time[3:5])
             hetd = int(end_time[9:11])
             metd = int(end_time[12:14])
-            end = datetime.datetime.now().replace(hour = het + hetd, minute = met + metd).time()
+            end = datetime.datetime.now().replace(hour = het + hetd, minute = met + metd, second = 0).time()
 
             event.start_time = start
             event.end_time = end
