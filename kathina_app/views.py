@@ -60,7 +60,7 @@ class EventList(generic.ListView):  # display a list of objects
 
 
 class TaskList(generic.ListView):  # display a list of objects
-    template_name = 'kathina_app/index.html'
+    template_name = 'kathina_app/events.html'
     context_object_name = 'task_list'
 
     def get_queryset(self):
@@ -70,39 +70,43 @@ class TaskList(generic.ListView):  # display a list of objects
         task.duration_minutes = 10
         task.save()
         return Event.objects.order_by('start_time')
-        
-    
-
-    def smart_scheduler(self):
-        taskList = Task.objects.all()
-        eventList = Event.objects.all()
-        smartList = eventList
-
-        pref_start_time = DateTime.Today.AddHours(9)
-        pref_end_time = DateTime.Today.AddHours(23)
-
-        #TODO: Need to code for overflowing end times (by going into the next day)
-
-        start_counter = pref_start_time
-        for i in range(len(taskList)):
-            taskTime = taskList[i].duration_with_breaks
-
-            for j in range(len(smartList)):
-                if taskTime <= smartList[j].start_time - start_counter:
-                    taskAsEvent = Event()
-                    taskAsEvent.name = taskList[i].name
-                    taskAsEvent.start_time = start_counter
-                    taskAsEvent.end_time = start_counter + taskTime
-
-                    smartList.insert(taskAsEvent, j)
-                    start_counter = start_counter + taskTime
-                    break
-                else:
-                    start_counter = smartList[j].end_time
-
-        return smartList
 
 
+def smart_scheduler():
+    taskList = Task.objects.all()
+    eventList = Event.objects.all()
+    smartList = eventList
+
+    pref_start_time = datetime.Today.AddHours(9)
+    pref_end_time = datetime.Today.AddHours(23)
+
+    #TODO: Need to code for overflowing end times (by going into the next day)
+
+    start_counter = pref_start_time
+    for i in range(len(taskList)):
+        taskTime = taskList[i].duration_with_breaks
+
+        for j in range(len(smartList)):
+            if taskTime <= smartList[j].start_time - start_counter:
+                taskAsEvent = Event()
+                taskAsEvent.name = taskList[i].name
+                taskAsEvent.start_time = start_counter
+                taskAsEvent.end_time = start_counter + taskTime
+
+                smartList.insert(taskAsEvent, j)
+                start_counter = start_counter + taskTime
+                break
+            else:
+                start_counter = smartList[j].end_time
+
+    return smartList
+
+class DayView(generic.ListView):
+    template_name = 'kathina_app/events.html'
+    context_object_name = 'day_list'
+
+    def get_queryset(self):
+        return smart_scheduler()
 
 def add_task(request):
     pass
