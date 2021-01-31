@@ -49,8 +49,22 @@ class EventList(generic.ListView):  # display a list of objects
         for item in items:
             event = Event()
             event.name = item['summary']
-            event.start_time = item['start']['dateTime'][11:]
-            event.end_time = item['end']['dateTime'][11:]
+
+            start_time = item['start']['dateTime'][11:]
+            hst = int(start_time[:2])
+            hstd = int(start_time[9:11])
+            mst = int(start_time[3:5])
+            mstd = int(start_time[12:14])
+            start = datetime.datetime.now().replace(hour = hst + hstd, minute = mst + mstd).time()
+            end_time = item['end']['dateTime'][11:]
+            het = int(end_time[:2])
+            met = int(start_time[3:5])
+            hetd = int(end_time[9:11])
+            metd = int(end_time[12:14])
+            end = datetime.datetime.now().replace(hour = het + hetd, minute = met + metd).time()
+
+            event.start_time = start
+            event.end_time = end
             event.save()
 
 
