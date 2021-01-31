@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     # add kathina_app urls
     url(r'^events/', include('kathina_app.urls', namespace='kathina')),
+    url(r'^tasks/', include('kathina_app.urls', namespace='kathina')),
 ]
